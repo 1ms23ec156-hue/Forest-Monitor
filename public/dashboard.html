@@ -32,6 +32,7 @@
     <a href="#" class="nav-item" data-panel="map"><i class="fas fa-map-marked-alt"></i> Node Map</a>
     <a href="#" class="nav-item" data-panel="alerts"><i class="fas fa-bell"></i> Live Alerts <span class="badge" id="alertBadge">0</span></a>
     <a href="#" class="nav-item" data-panel="insights"><i class="fas fa-chart-bar"></i> Insights</a>
+    <a href="#" class="nav-item" data-panel="graph"><i class="fas fa-brain"></i> AI Query</a>
     <a href="#" class="nav-item" data-panel="prediction"><i class="fas fa-draw-polygon"></i> Prediction Zones</a>
     <a href="#" class="nav-item" data-panel="nodes"><i class="fas fa-microchip"></i> Nodes</a>
   </nav>
@@ -177,6 +178,7 @@
         <button class="filter-btn" data-filter="info">Info</button>
         <button class="filter-btn" data-filter="CAM">Camera</button>
         <button class="filter-btn" data-filter="AUD">Audio</button>
+        <button class="filter-btn" data-filter="SENS">Sensor</button>
       </div>
       <span class="alert-count" id="filteredCount">0 alerts</span>
     </div>
@@ -217,6 +219,67 @@
   </div>
 
   <!-- ══════════ PREDICTION PANEL ══════════ -->
+  <div class="panel" id="panel-graph">
+    <div class="graph-layout">
+      <div class="card graph-control-card">
+        <div class="card-header">
+          <h3><i class="fas fa-database"></i> Remote Neo4j</h3>
+        </div>
+        <div class="graph-status" id="graphStatus">
+          <span class="status-dot offline"></span>
+          <span>Checking graph connection...</span>
+        </div>
+        <div class="graph-actions">
+          <button class="btn-small" id="verifyGraphBtn"><i class="fas fa-plug"></i> Verify</button>
+          <button class="btn-small" id="seedGraphBtn"><i class="fas fa-seedling"></i> Seed India Graph</button>
+        </div>
+        <div class="graph-note" id="graphSeedResult"></div>
+      </div>
+
+      <div class="card graph-control-card">
+        <div class="card-header">
+          <h3><i class="fas fa-tower-broadcast"></i> Test Stream</h3>
+        </div>
+        <div class="graph-status" id="streamStatus">
+          <span class="status-dot offline"></span>
+          <span>Stream stopped</span>
+        </div>
+        <div class="stream-controls">
+          <label>
+            Interval
+            <select id="streamInterval">
+              <option value="2500">2.5s</option>
+              <option value="4000" selected>4s</option>
+              <option value="7000">7s</option>
+            </select>
+          </label>
+          <button class="btn-small" id="startStreamBtn"><i class="fas fa-play"></i> Start</button>
+          <button class="btn-small" id="stopStreamBtn"><i class="fas fa-stop"></i> Stop</button>
+        </div>
+      </div>
+
+      <div class="card graph-chat-card">
+        <div class="card-header">
+          <h3><i class="fas fa-comments"></i> Forest Graph Agent</h3>
+        </div>
+        <div class="prompt-chips">
+          <button data-question="Which zone has the highest risk today?">Highest risk zone</button>
+          <button data-question="Where are Asian elephants moving?">Elephant movement</button>
+          <button data-question="Is there illegal logging risk?">Logging risk</button>
+          <button data-question="Which nodes have the most detections?">Node load</button>
+          <button data-question="Show recent acoustic anomalies and sounds">Acoustic activity</button>
+        </div>
+        <form class="graph-query-form" id="graphQueryForm">
+          <input id="graphQuestion" type="text" placeholder="Ask about animals, zones, nodes, logging, fire, or acoustic activity" autocomplete="off"/>
+          <button type="submit"><i class="fas fa-paper-plane"></i></button>
+        </form>
+        <div class="agent-answer" id="agentAnswer">
+          <p>Seed the remote graph, start the stream, then ask a question.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="panel" id="panel-prediction">
     <div class="prediction-layout">
       <div class="card prediction-map-card">

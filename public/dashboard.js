@@ -124,7 +124,7 @@ function switchPanel(name) {
   if (nav) nav.classList.add('active');
 
   document.getElementById('panelTitle').textContent =
-    { overview:'Overview', map:'Node Map', alerts:'Live Alerts', insights:'Insights', prediction:'Prediction Zones', nodes:'Nodes' }[name] || name;
+    { overview:'Overview', map:'Node Map', alerts:'Live Alerts', insights:'Insights', graph:'AI Forest Query', prediction:'Prediction Zones', nodes:'Nodes' }[name] || name;
 
   // Resize maps when switching
   if (name === 'map' && fullMap) setTimeout(() => fullMap.invalidateSize(), 100);
@@ -162,70 +162,192 @@ function createDarkTiles() {
   });
 }
 
-function initMaps() {
-  // Nitte Meenakshi Institute of Technology, Yelahanka
-  const center = [13.0816, 77.5883];
+// Nitte Meenakshi Institute of Technology (NMIT), Yelahanka, Bangalore.
+const NMIT_CENTER = [13.1186, 77.6002];
+const NMIT_ZOOM = 18;
 
-  // Mini map — zoom 17 for campus-level view
+const ZONE_PALETTE = {
+  'Z-KABINI':        '#3fb950',
+  'Z-BANDIPUR-CORE': '#e8612d',
+  'Z-MOYAR':         '#d29922',
+  'Z-MUDUMALAI':     '#bc8cff',
+  'Z-FARM-BUFFER':   '#79c0ff',
+  'Z-WATCH-RIDGE':   '#f85149',
+  'Z-WATERHOLE':     '#58a6ff',
+};
+
+let miniZoneLayer, fullZoneLayer;
+let miniMeshLayer, fullMeshLayer;
+
+function nodeNumber(id) {
+  if (id === 'SENDER-NODE') return 'TX';
+  if (id === 'RECEIVER-NODE') return 'RX';
+  const m = String(id).match(/(\d+)/);
+  return m ? m[1].padStart(2, '0') : id;
+}
+
+function nodeColor(id, status) {
+  if (status) return threatColor(status.lastThreat);
+  if (id === 'SENDER-NODE') return '#e8612d';
+  if (id === 'RECEIVER-NODE') return '#58a6ff';
+  const node = nodes[id];
+  if (node && ZONE_PALETTE[node.zoneId]) return ZONE_PALETTE[node.zoneId];
+  return '#58a6ff';
+}
+
+function buildNodeIcon(id, status, { pulse = false } = {}) {
+  const color = nodeColor(id, status);
+  const size = 32;
+  return L.divIcon({
+    className: 'custom-marker',
+    html: `<div style="
+      width:${size}px;height:${size}px;border-radius:50%;
+      background:${color};
+      border:3px solid #ffffff44;
+      box-shadow:0 0 18px ${color}aa, 0 0 0 2px ${color}33;
+      display:flex;align-items:center;justify-content:center;
+      font-size:11px;font-weight:800;color:#fff;
+      font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;
+      ${pulse ? 'animation: pulse 1s ease 3;' : ''}
+    ">${nodeNumber(id)}</div>`,
+    iconSize: [size, size],
+    iconAnchor: [size / 2, size / 2],
+  });
+}
+
+function nodePopupHTML(id, node, status) {
+  const color = nodeColor(id, status);
+  const lastSeen = status ? `
+    <div style="margin-top:6px;color:${color};font-weight:600">Last: ${status.lastCategory}</div>
+    <div style="color:#6e7681;font-size:.78rem">${status.totalDetections} detections · ${timeAgo(status.lastSeen)}</div>
+  ` : '<div style="margin-top:6px;color:#6e7681">Waiting for data...</div>';
+
+  return `
+    <strong style="font-size:1rem">${id}</strong>
+    <span style="display:inline-block;margin-left:6px;padding:1px 6px;border-radius:4px;background:${color}33;color:${color};font-size:.65rem;font-weight:700">${node.zoneId || ''}</span><br/>
+    <div style="color:#e8612d;font-weight:600">${node.role || 'AI Detection Node'}</div>
+    <div style="color:#6e7681;font-size:.78rem">${node.device || ''}</div>
+    <div style="color:#c9d1d9;font-size:.82rem;margin-top:2px">${node.zone}</div>
+    <div style="color:#6e7681;font-size:.72rem;font-family:'JetBrains Mono',monospace">${node.lat.toFixed(5)}, ${node.lng.toFixed(5)} · battery ${node.battery ?? '—'}%</div>
+    ${lastSeen}
+  `;
+}
+
+function drawZoneOverlays(map) {
+  // Build a flat list of zone center points by averaging the nodes inside each zone.
+  const zones = {};
+  Object.values(nodes).forEach((n) => {
+    const z = zones[n.zoneId] = zones[n.zoneId] || {
+      zoneId: n.zoneId,
+      name: n.zone,
+      latSum: 0,
+      lngSum: 0,
+      count: 0,
+    };
+    z.latSum += n.lat;
+    z.lngSum += n.lng;
+    z.count += 1;
+  });
+
+  const layer = L.layerGroup();
+  Object.values(zones).forEach((z) => {
+    const lat = z.latSum / z.count;
+    const lng = z.lngSum / z.count;
+    const color = ZONE_PALETTE[z.zoneId] || '#e8612d';
+
+    const circle = L.circle([lat, lng], {
+      radius: 35, // ~35 m, fits a campus zone block
+      color,
+      weight: 1.5,
+      fillColor: color,
+      fillOpacity: 0.10,
+      dashArray: '4 4',
+    });
+    circle.bindTooltip(`<b>${z.name}</b><br/><span style="color:#6e7681">${z.zoneId}</span>`,
+      { direction: 'top', offset: [0, -2], className: 'zone-tooltip' });
+    layer.addLayer(circle);
+  });
+
+  layer.addTo(map);
+  return layer;
+}
+
+function drawMeshLinks(map) {
+  // Single LoRa link between TX and RX (the only two nodes in the demo).
+  const tx = nodes['SENDER-NODE'];
+  const rx = nodes['RECEIVER-NODE'];
+  if (!tx || !rx) return null;
+
+  const layer = L.layerGroup();
+
+  // Glow under the link
+  L.polyline([[tx.lat, tx.lng], [rx.lat, rx.lng]], {
+    color: '#e8612d',
+    weight: 6,
+    opacity: 0.18,
+  }).addTo(layer);
+
+  // Main dashed link
+  L.polyline([[tx.lat, tx.lng], [rx.lat, rx.lng]], {
+    color: '#e8612d',
+    weight: 2,
+    opacity: 0.85,
+    dashArray: '8 6',
+  }).addTo(layer).bindTooltip('LoRa link · TX → RX', { sticky: true, className: 'zone-tooltip' });
+
+  layer.addTo(map);
+  return layer;
+}
+
+function fitToNodes(map) {
+  const points = Object.values(nodes).map((n) => [n.lat, n.lng]);
+  if (!points.length) return;
+  const bounds = L.latLngBounds(points).pad(0.35);
+  map.fitBounds(bounds, { maxZoom: 19 });
+}
+
+function initMaps() {
+  // Mini map — campus-block view of NMIT
   if (!miniMap) {
-    miniMap = L.map('miniMap', { zoomControl: false, attributionControl: false }).setView(center, 17);
+    miniMap = L.map('miniMap', { zoomControl: false, attributionControl: false }).setView(NMIT_CENTER, NMIT_ZOOM);
     createDarkTiles().addTo(miniMap);
   }
 
   // Full map
   if (!fullMap) {
-    fullMap = L.map('fullMap', { attributionControl: false }).setView(center, 17);
+    fullMap = L.map('fullMap', { attributionControl: false }).setView(NMIT_CENTER, NMIT_ZOOM);
     createDarkTiles().addTo(fullMap);
   }
+
+  // Clear any previous overlays before re-adding (idempotent on re-init).
+  [miniZoneLayer, fullZoneLayer, miniMeshLayer, fullMeshLayer].forEach((l) => l && l.remove());
+  Object.values(miniMarkers).forEach((m) => m.remove());
+  Object.values(fullMarkers).forEach((m) => m.remove());
+  miniMarkers = {};
+  fullMarkers = {};
+
+  // Zone overlays + mesh links
+  miniZoneLayer = drawZoneOverlays(miniMap);
+  fullZoneLayer = drawZoneOverlays(fullMap);
+  miniMeshLayer = drawMeshLinks(miniMap);
+  fullMeshLayer = drawMeshLinks(fullMap);
 
   // Add node markers
   Object.entries(nodes).forEach(([id, node]) => {
     addNodeMarker(id, node, miniMap, miniMarkers);
     addNodeMarker(id, node, fullMap, fullMarkers);
   });
+
+  // Fit bounds so all nodes are visible.
+  fitToNodes(miniMap);
+  fitToNodes(fullMap);
 }
 
 function addNodeMarker(id, node, map, markersObj) {
   const status = nodeStatus[id];
-  const isSender = id === 'SENDER-NODE';
-  const color = status ? threatColor(status.lastThreat) : (isSender ? '#e8612d' : '#58a6ff');
-  const label = isSender ? 'TX' : 'RX';
-  const size = 28;
-
-  const icon = L.divIcon({
-    className: 'custom-marker',
-    html: `<div style="
-      width:${size}px;height:${size}px;border-radius:50%;
-      background:${color};
-      border:3px solid ${color};
-      box-shadow:0 0 16px ${color}77;
-      display:flex;align-items:center;justify-content:center;
-      font-size:10px;font-weight:800;color:#fff;
-      font-family:'JetBrains Mono',monospace;
-    ">${label}</div>`,
-    iconSize: [size, size],
-    iconAnchor: [size/2, size/2],
-  });
-
-  const marker = L.marker([node.lat, node.lng], { icon }).addTo(map);
-  marker.bindPopup(`
-    <strong style="font-size:1rem">${id}</strong><br/>
-    <span style="color:#e8612d;font-weight:600">${node.role || ''}</span><br/>
-    <span style="color:#6e7681">${node.device || ''}</span><br/>
-    <span style="color:#6e7681">${node.zone}</span><br/>
-    ${status ? `<span style="color:${color}">Last: ${status.lastCategory}</span><br/>
-    <span style="color:#6e7681">Total: ${status.totalDetections} detections</span>` : '<span style="color:#6e7681">Waiting for data...</span>'}
-  `);
-
+  const marker = L.marker([node.lat, node.lng], { icon: buildNodeIcon(id, status) }).addTo(map);
+  marker.bindPopup(nodePopupHTML(id, node, status));
   markersObj[id] = marker;
-
-  // Draw a dashed line between sender and receiver
-  if (isSender && nodes['RECEIVER-NODE']) {
-    const rx = nodes['RECEIVER-NODE'];
-    L.polyline([[node.lat, node.lng], [rx.lat, rx.lng]], {
-      color: '#e8612d', weight: 2, dashArray: '8,6', opacity: 0.5,
-    }).addTo(map);
-  }
 }
 
 function updateNodeMarker(nodeId, detection) {
@@ -239,38 +361,11 @@ function updateNodeMarker(nodeId, detection) {
     totalDetections: (nodeStatus[nodeId]?.totalDetections || 0) + 1,
   };
 
-  const color = threatColor(detection.threat);
-
-  const isSender = nodeId === 'SENDER-NODE';
-  const label = isSender ? 'TX' : 'RX';
-
-  [miniMarkers, fullMarkers].forEach(markers => {
-    if (markers[nodeId]) {
-      markers[nodeId].setIcon(L.divIcon({
-        className: 'custom-marker',
-        html: `<div style="
-          width:28px;height:28px;border-radius:50%;
-          background:${color};
-          border:3px solid ${color};
-          box-shadow:0 0 20px ${color}aa;
-          display:flex;align-items:center;justify-content:center;
-          font-size:10px;font-weight:800;color:#fff;
-          font-family:'JetBrains Mono',monospace;
-          animation: pulse 1s ease 3;
-        ">${label}</div>`,
-        iconSize: [28, 28],
-        iconAnchor: [14, 14],
-      }));
-
-      const n = nodes[nodeId];
-      const s = nodeStatus[nodeId];
-      markers[nodeId].setPopupContent(`
-        <strong style="font-size:1rem">${nodeId}</strong><br/>
-        <span style="color:#e8612d;font-weight:600">${n.role || ''}</span><br/>
-        <span style="color:${color}">Last: ${s.lastCategory}</span><br/>
-        <span style="color:#6e7681">Total: ${s.totalDetections} detections</span>
-      `);
-    }
+  const status = nodeStatus[nodeId];
+  [miniMarkers, fullMarkers].forEach((markers) => {
+    if (!markers[nodeId]) return;
+    markers[nodeId].setIcon(buildNodeIcon(nodeId, status, { pulse: true }));
+    markers[nodeId].setPopupContent(nodePopupHTML(nodeId, node, status));
   });
 
   renderNodes();
@@ -672,7 +767,7 @@ function getZonePredictions() {
   const topAnimals = sortedWildlife(counts);
   const nodeLoad = Object.values(nodeStatus).reduce((acc, n) => acc + (n.totalDetections || 0), 0);
   const dynamicBoost = Math.min(12, Math.floor(nodeLoad / 8));
-  const center = [12.9987, 77.5911];
+  const center = NMIT_CENTER;
 
   return HEX_ZONES.map((zone, i) => {
     const animal = zoneAnimalByIndex(topAnimals, i);
@@ -830,8 +925,7 @@ function initPredictionMap() {
   const el = document.getElementById('predictionMap');
   if (!el || predictionMap) return;
 
-  const center = [12.9987, 77.5911];
-  predictionMap = L.map('predictionMap', { attributionControl: false }).setView(center, 17);
+  predictionMap = L.map('predictionMap', { attributionControl: false }).setView(NMIT_CENTER, NMIT_ZOOM);
   createDarkTiles().addTo(predictionMap);
   predictionLayers = L.layerGroup().addTo(predictionMap);
 }
@@ -859,8 +953,12 @@ function renderPredictionHexMap() {
   });
 
   Object.entries(nodes).forEach(([id, node]) => {
-    const label = id === 'SENDER-NODE' ? 'TX' : 'RX';
-    const icon = L.divIcon({ className: '', html: `<div class="prediction-node-icon">${label}</div>`, iconSize: [28, 28], iconAnchor: [14, 14] });
+    const icon = L.divIcon({
+      className: '',
+      html: `<div class="prediction-node-icon">${nodeNumber(id)}</div>`,
+      iconSize: [28, 28],
+      iconAnchor: [14, 14],
+    });
     const marker = L.marker([node.lat, node.lng], { icon });
     marker.bindPopup(`<strong>${id}</strong><br>${node.zone || 'Zone'}`);
     marker.addTo(predictionLayers);
@@ -902,6 +1000,251 @@ function renderPredictionRecommendations() {
     btn.addEventListener('click', () => {
       playGuidanceTone(btn.dataset.animal, btn.dataset.zone || 'zone');
     });
+  });
+}
+
+// ═══════ AI QUERY (NEO4J + GROQ) ═══════
+
+const graphStatusEl = document.getElementById('graphStatus');
+const streamStatusEl = document.getElementById('streamStatus');
+const seedNoteEl = document.getElementById('graphSeedResult');
+const agentAnswerEl = document.getElementById('agentAnswer');
+const graphQuestionEl = document.getElementById('graphQuestion');
+const graphFormEl = document.getElementById('graphQueryForm');
+
+function renderGraphStatus(status) {
+  if (!graphStatusEl) return;
+  if (!status) {
+    graphStatusEl.innerHTML = `<span class="status-dot offline"></span><span>Checking graph connection...</span>`;
+    return;
+  }
+
+  const ok = status.configured && status.connected;
+  const cls = ok ? 'ok' : (status.configured ? 'warn' : 'err');
+  const dotCls = ok ? 'online' : (status.configured ? 'demo' : 'offline');
+  const label = ok ? 'CONNECTED' : (status.configured ? 'NOT VERIFIED' : 'NOT CONFIGURED');
+  const detail = status.message
+    || (status.uri ? `${status.uri} · db: ${status.database || 'neo4j'}` : 'Set NEO4J_* in .env');
+
+  graphStatusEl.innerHTML = `
+    <span class="status-dot ${dotCls}"></span>
+    <span>${detail}</span>
+    <span class="status-pill ${cls}">${label}</span>
+  `;
+}
+
+function renderStreamStatus(status) {
+  if (!streamStatusEl) return;
+  if (!status || !status.running) {
+    streamStatusEl.innerHTML = `<span class="status-dot offline"></span><span>Stream stopped</span>`;
+    return;
+  }
+  streamStatusEl.innerHTML = `
+    <span class="status-dot online"></span>
+    <span>Streaming · ${status.emitted || 0} events emitted · every ${(status.intervalMs/1000).toFixed(1)}s</span>
+  `;
+}
+
+function setSeedNote(html, kind) {
+  if (!seedNoteEl) return;
+  const cls = kind === 'success' ? 'note-success' : kind === 'error' ? 'note-error' : '';
+  seedNoteEl.innerHTML = `<span class="${cls}">${html}</span>`;
+}
+
+async function callGraphApi(path, options = {}) {
+  const res = await fetch(path, options);
+  let data;
+  try { data = await res.json(); } catch { data = {}; }
+  if (!res.ok && !data.error) data.error = `HTTP ${res.status}`;
+  return data;
+}
+
+async function refreshGraphStatus() {
+  try {
+    const data = await callGraphApi('/api/graph/status');
+    renderGraphStatus(data);
+  } catch (err) {
+    renderGraphStatus({ configured: false, connected: false, message: err.message });
+  }
+}
+
+const verifyBtn = document.getElementById('verifyGraphBtn');
+if (verifyBtn) {
+  verifyBtn.addEventListener('click', async () => {
+    verifyBtn.disabled = true;
+    setSeedNote(`<span class="spinner"></span>Verifying Neo4j connection...`);
+    try {
+      const data = await callGraphApi('/api/graph/verify');
+      renderGraphStatus(data);
+      if (data.connected) setSeedNote('Connection verified.', 'success');
+      else setSeedNote(data.error || data.message || 'Could not verify.', 'error');
+    } catch (err) {
+      setSeedNote(`Verify failed: ${err.message}`, 'error');
+    } finally {
+      verifyBtn.disabled = false;
+    }
+  });
+}
+
+const seedBtn = document.getElementById('seedGraphBtn');
+if (seedBtn) {
+  seedBtn.addEventListener('click', async () => {
+    seedBtn.disabled = true;
+    setSeedNote(`<span class="spinner"></span>Exporting 19 nodes, zones, animals, and detections to Neo4j...`);
+    try {
+      const data = await callGraphApi('/api/graph/seed', { method: 'POST' });
+      if (data.success) {
+        setSeedNote(`
+          <strong>Graph exported successfully.</strong>
+          <div class="seed-summary">
+            <div class="seed-stat"><span class="seed-stat-value">${data.nodes}</span><span class="seed-stat-label">Forest Nodes</span></div>
+            <div class="seed-stat"><span class="seed-stat-value">${data.zones}</span><span class="seed-stat-label">Zones</span></div>
+            <div class="seed-stat"><span class="seed-stat-value">${data.animals}</span><span class="seed-stat-label">Animals</span></div>
+            <div class="seed-stat"><span class="seed-stat-value">${data.detections}</span><span class="seed-stat-label">Detections</span></div>
+          </div>
+        `, 'success');
+        refreshGraphStatus();
+      } else {
+        setSeedNote(`Seeding failed: ${data.error || 'unknown error'}`, 'error');
+      }
+    } catch (err) {
+      setSeedNote(`Seeding failed: ${err.message}`, 'error');
+    } finally {
+      seedBtn.disabled = false;
+    }
+  });
+}
+
+const startStreamBtn = document.getElementById('startStreamBtn');
+if (startStreamBtn) {
+  startStreamBtn.addEventListener('click', async () => {
+    const intervalMs = parseInt(document.getElementById('streamInterval').value, 10);
+    try {
+      const data = await callGraphApi('/api/stream/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ intervalMs }),
+      });
+      renderStreamStatus(data);
+    } catch (err) {
+      renderStreamStatus({ running: false });
+    }
+  });
+}
+
+const stopStreamBtn = document.getElementById('stopStreamBtn');
+if (stopStreamBtn) {
+  stopStreamBtn.addEventListener('click', async () => {
+    try {
+      const data = await callGraphApi('/api/stream/stop', { method: 'POST' });
+      renderStreamStatus(data);
+    } catch (err) {
+      renderStreamStatus({ running: false });
+    }
+  });
+}
+
+document.querySelectorAll('.prompt-chips button[data-question]').forEach((btn) => {
+  btn.addEventListener('click', () => {
+    if (graphQuestionEl) graphQuestionEl.value = btn.dataset.question;
+    submitAgentQuery(btn.dataset.question);
+  });
+});
+
+if (graphFormEl) {
+  graphFormEl.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const q = graphQuestionEl?.value?.trim();
+    if (!q) return;
+    submitAgentQuery(q);
+  });
+}
+
+function appendAgentBlock({ question, answer, cypher, records, error }) {
+  if (!agentAnswerEl) return;
+
+  const placeholder = agentAnswerEl.querySelector('.placeholder');
+  if (placeholder) placeholder.remove();
+
+  const block = document.createElement('div');
+  block.className = `agent-block ${error ? 'error' : ''}`;
+  const recordCount = Array.isArray(records) ? records.length : 0;
+  const recordPreview = recordCount
+    ? JSON.stringify(records.slice(0, 8), null, 2)
+    : '(no rows returned)';
+
+  block.innerHTML = `
+    <div class="agent-question"><strong>${escapeHtml(question)}</strong></div>
+    <div class="agent-text">${escapeHtml(answer || '(no answer)')}</div>
+    ${cypher ? `<details><summary><i class="fas fa-code"></i> Cypher used</summary><div class="agent-cypher">${escapeHtml(cypher)}</div></details>` : ''}
+    ${recordCount ? `<details><summary><i class="fas fa-table"></i> ${recordCount} graph row${recordCount === 1 ? '' : 's'}</summary><div class="agent-records">${escapeHtml(recordPreview)}</div></details>` : ''}
+  `;
+  agentAnswerEl.prepend(block);
+}
+
+function escapeHtml(text) {
+  return String(text ?? '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;');
+}
+
+async function submitAgentQuery(question) {
+  if (!agentAnswerEl) return;
+  const placeholder = agentAnswerEl.querySelector('.placeholder');
+  if (placeholder) placeholder.remove();
+
+  const submitBtn = graphFormEl?.querySelector('button[type="submit"]');
+  if (submitBtn) submitBtn.disabled = true;
+
+  const loading = document.createElement('div');
+  loading.className = 'agent-block';
+  loading.innerHTML = `
+    <div class="agent-question"><strong>${escapeHtml(question)}</strong></div>
+    <div class="agent-text"><span class="spinner"></span>Asking the Groq + Neo4j agent...</div>
+  `;
+  agentAnswerEl.prepend(loading);
+
+  try {
+    const data = await callGraphApi('/api/agent/ask', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ question }),
+    });
+    loading.remove();
+    appendAgentBlock({
+      question,
+      answer: data.answer,
+      cypher: data.cypher,
+      records: data.records,
+      error: data.error,
+    });
+  } catch (err) {
+    loading.remove();
+    appendAgentBlock({ question, answer: err.message, error: err.message });
+  } finally {
+    if (submitBtn) submitBtn.disabled = false;
+    if (graphQuestionEl) graphQuestionEl.value = '';
+  }
+}
+
+// Stream + graph status push from server
+socket.on('stream-status', renderStreamStatus);
+
+// Pull initial graph + stream state on first connect.
+(function initGraphPanel() {
+  refreshGraphStatus();
+  callGraphApi('/api/stream/status').then(renderStreamStatus).catch(() => {});
+})();
+
+// Use the graph status emitted in the socket init payload, if present.
+const _origInitHandler = socket.listeners('init')[0];
+if (!socket._graphInitPatched) {
+  socket._graphInitPatched = true;
+  socket.on('init', (data) => {
+    if (data && data.graph) renderGraphStatus(data.graph);
+    if (data && data.stream) renderStreamStatus(data.stream);
   });
 }
 
