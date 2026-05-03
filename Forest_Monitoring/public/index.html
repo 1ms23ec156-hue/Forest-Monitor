@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>WildSenseAI — VanRakshak | AI-Powered Smart Forest Monitoring</title>
+  <meta name="description" content="VanRakshak by WildSenseAI: AI-enabled smart forest monitoring with edge AI, bioacoustic fusion, LoRa mesh networking. Real-time threat detection for forests."/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta property="og:title" content="WildSenseAI — VanRakshak | AI-Powered Smart Forest Monitoring"/>
+  <meta property="og:description" content="Real-time forest protection with Edge AI, IoT, Bioacoustic Intelligence & LoRa Mesh. Detect poachers, illegal logging, wildfires — instantly."/>
+  <meta property="og:type" content="website"/>
+  <link rel="stylesheet" href="styles.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar" id="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-brand">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="16" stroke="#e8612d" stroke-width="2" fill="none"/>
+        <path d="M10 22 C10 14, 18 8, 18 8 C18 8, 26 14, 26 22" stroke="#e8612d" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="18" cy="17" r="3" fill="#e8612d"/>
+        <path d="M18 20 L18 26" stroke="#e8612d" stroke-width="2" stroke-linecap="round"/>
+        <path d="M15 24 L21 24" stroke="#e8612d" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Wild<span>Sense</span>AI
+    </a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#hero" class="active">Home</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#technology">Technology</a></li>
+      <li><a href="#use-cases">Applications</a></li>
+      <li><a href="/dashboard" class="btn btn-primary">Dashboard</a></li>
+      <li><a href="#contact" class="btn btn-primary">Get VanRakshak</a></li>
+    </ul>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <div class="hero-image-grid">
+    <img src="/images/15.png" alt="Elephant detected"/>
+    <img src="/images/08.png" alt="Poacher detection"/>
+    <img src="/images/85.png" alt="Logging truck detected"/>
+    <img src="/images/35.png" alt="Tiger in forest"/>
+    <img src="/images/18.png" alt="Chimpanzee detection"/>
+    <img src="/images/11.png" alt="Cougar night vision"/>
+    <img src="/images/90.png" alt="Forest canopy aerial"/>
+    <img src="/images/19.png" alt="Owl detection"/>
+    <img src="/images/03.png" alt="Rhino in wild"/>
+    <img src="/images/80.png" alt="Person detection night"/>
+    <img src="/images/50.png" alt="Bear in snow"/>
+    <img src="/images/25.png" alt="Monitoring station"/>
+  </div>
+  <div class="hero-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-text">
+      <h1>Forests Can Now <br/><span class="highlight">See, Hear &amp; Protect</span> Themselves</h1>
+      <p class="hero-subtitle">VanRakshak transforms passive forest surveillance into active, real-time protection using Edge AI, IoT sensors, Bioacoustic Fusion Intelligence, and LoRa mesh networking.</p>
+      <div class="hero-actions">
+        <a href="#technology" class="btn btn-primary btn-large">Explore VanRakshak</a>
+        <a href="#about" class="btn btn-outline btn-large">Learn More</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat">
+          <div class="hero-stat-value">1,800<span>+</span></div>
+          <div class="hero-stat-label">Sq Km Coverage</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">&lt;15<span>s</span></div>
+          <div class="hero-stat-label">Alert Response</div>
+        </div>
+        <div class="hero-stat">
+          <div class="hero-stat-value">24<span>/7</span></div>
+          <div class="hero-stat-label">Autonomous Watch</div>
+        </div>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="hero-visual-main">
+        <img src="/images/15.png" alt="AI detecting elephant in forest"/>
+        <div class="detection-box" style="top:15%; left:20%; width:60%; height:75%;">
+          <span class="detection-label">Elephant</span>
+          <span class="confidence-badge">98.5%</span>
+        </div>
+      </div>
+      <div class="hero-visual-float hero-float-1">
+        <img src="/images/06.png" alt="Poacher detection at night"/>
+      </div>
+      <div class="hero-visual-float hero-float-2">
+        <img src="/images/09.png" alt="Logging truck AI detection"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HEADLINE BANNER ===== -->
+<section class="headline-banner">
+  <div class="container">
+    <span class="headline-label">VanRakshak</span>
+    <p class="headline-text">With the Power of AI &amp; Bioacoustic Fusion,</p>
+    <h2 class="headline-big">The Forest Is<br/>Watching</h2>
+    <p class="headline-confidence">System Accuracy: 98.5%</p>
+  </div>
+</section>
+
+<!-- ===== ABOUT ===== -->
+<section class="section" id="about">
+  <div class="container">
+    <div class="tech-grid fade-in">
+      <div class="tech-content">
+        <span class="section-label">About WildSenseAI</span>
+        <h3>The Problem We Solve</h3>
+        <p>Forests are the lungs of our planet — sustaining biodiversity, regulating climate, and supporting countless ecosystems. Yet they remain among the most poorly monitored environments on Earth.</p>
+        <p>Conventional forest monitoring relies on static camera traps with memory cards. Data must be physically retrieved after days, weeks, or months. A poacher may enter, hunt, and leave unnoticed. Illegal logging may occur within minutes. A spark may grow into a devastating wildfire. These systems do not prevent — they merely document the past.</p>
+        <p>VanRakshak changes everything. For the first time, forests are not silent anymore. They can see. They can hear. They can protect themselves.</p>
+      </div>
+      <div class="tech-image">
+        <img src="/images/04.png" alt="Forest guardian — the eyes of VanRakshak"/>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== IMAGE MOSAIC ===== -->
+<section class="section-dark" style="padding: 0;">
+  <div class="image-mosaic">
+    <div class="mosaic-item">
+      <img src="/images/15.png" alt="Elephant detection"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-crosshairs"></i> Elephant Detected</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/09.png" alt="Logging truck"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-truck"></i> Logging Truck</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/81.png" alt="Additional forest monitoring scene"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-camera"></i> Field Capture</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/08.png" alt="Poacher detection"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-user-slash"></i> Poacher Alert</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/35.png" alt="Tiger monitoring"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-paw"></i> Tiger Tracked</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/11.png" alt="Night vision cougar"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-moon"></i> Night Detection</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/70.png" alt="Additional wildlife monitoring scene"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-binoculars"></i> Wildlife Watch</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/18.png" alt="Chimpanzee monitoring"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-binoculars"></i> Primate Watch</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/25.png" alt="Control room"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-desktop"></i> Command Center</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/20.png" alt="Rhino detection"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label"><i class="fas fa-shield-alt"></i> Rhino Protected</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CORE FEATURES ===== -->
+<section class="section" id="features">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Core Capabilities</span>
+      <h2 class="section-title">Intelligent Forest Protection</h2>
+      <p class="section-subtitle">VanRakshak combines six powerful technologies into one autonomous forest guardian that detects, classifies, and alerts in real time.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-brain"></i></div>
+        <h3>Edge AI Classification</h3>
+        <p>On-device AI processes camera images locally on Raspberry Pi, classifying events as human intrusion, wildlife, vehicles, or logging activity without internet.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-microphone-alt"></i></div>
+        <h3>Bioacoustic Fusion Intelligence</h3>
+        <p>Embedded microphone arrays detect gunshots, chainsaw sounds, and animal vocalizations. Combines vision + sound for multi-sensory surveillance.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-broadcast-tower"></i></div>
+        <h3>LoRa Mesh Networking</h3>
+        <p>Self-healing mesh network with 10-15 km range per node. Data hops node-to-node reaching base stations without internet or cellular dependency.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-fire"></i></div>
+        <h3>Wildfire Early Detection</h3>
+        <p>Integrated temperature spikes and smoke detection sensors enable early forest fire alerts, allowing intervention before devastating escalation.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-wave-square"></i></div>
+        <h3>Acoustic Pattern Intelligence</h3>
+        <p>Analyzes temporal sound patterns over days. If animal sounds suddenly disappear from a region, the system flags potential ecological disturbance.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-search-location"></i></div>
+        <h3>Search &amp; Rescue</h3>
+        <p>Detects human presence in remote areas, identifies lost individuals, and transmits their location instantly for life-saving rescue operations.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== HOW IT WORKS ===== -->
+<section class="section section-dark" id="how-it-works">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Event-Driven AI</span>
+      <h2 class="section-title">How VanRakshak Works</h2>
+      <p class="section-subtitle">Unlike traditional camera traps, VanRakshak is fully event-driven — converting raw sensor data into actionable intelligence in seconds.</p>
+    </div>
+    <div class="how-it-works-grid">
+      <div class="step-card fade-in">
+        <h4>Motion Detected</h4>
+        <p>PIR motion sensor detects movement in the forest, triggering the camera module instantly.</p>
+      </div>
+      <div class="step-card fade-in">
+        <h4>Image Captured</h4>
+        <p>High-resolution camera captures the scene while microphone array simultaneously records ambient audio.</p>
+      </div>
+      <div class="step-card fade-in">
+        <h4>Edge AI Processes</h4>
+        <p>Raspberry Pi runs the AI model locally — classifying the event as human, animal, vehicle, or threat in milliseconds.</p>
+      </div>
+      <div class="step-card fade-in">
+        <h4>Alert Transmitted</h4>
+        <p>Classified alerts with images and sound data are transmitted via LoRa mesh network to the base station.</p>
+      </div>
+      <div class="step-card fade-in">
+        <h4>Dashboard Display</h4>
+        <p>Rangers receive real-time alerts: "POACHER ALERT – Node 3", "CHAINSAW DETECTED – Node 5" with timestamps and evidence.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== TECHNOLOGY SECTION ===== -->
+<section class="section" id="technology">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Technology</span>
+      <h2 class="section-title">Multi-Sensory Intelligence</h2>
+    </div>
+
+    <!-- Edge AI -->
+    <div class="tech-grid fade-in" style="margin-bottom: 6rem;">
+      <div class="tech-image">
+        <img src="/images/18.png" alt="AI wildlife classification in action"/>
+      </div>
+      <div class="tech-content">
+        <h3>Edge AI Vision System</h3>
+        <p>Each node runs a lightweight AI model on a Raspberry Pi, enabling real-time classification without cloud dependency. The system identifies humans, animals, vehicles, and logging activity directly at the edge.</p>
+        <ul class="tech-features">
+          <li>On-device inference — no internet required</li>
+          <li>Multi-class detection: human, animal, vehicle, fire</li>
+          <li>Night vision capable with IR camera module</li>
+          <li>98.5% classification accuracy</li>
+          <li>Processes images in under 2 seconds</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Bioacoustic -->
+    <div class="tech-grid fade-in" style="margin-bottom: 6rem;">
+      <div class="tech-content">
+        <h3>Bioacoustic Fusion Intelligence</h3>
+        <p>The forest is not just seen — it is heard. Embedded microphone arrays combined with AI-based sound classification create a multi-sensory surveillance system that detects threats invisible to cameras.</p>
+        <ul class="tech-features">
+          <li>Gunshot detection for anti-poaching</li>
+          <li>Chainsaw sound identification for illegal logging</li>
+          <li>Animal vocalization tracking for ecological health</li>
+          <li>Silence anomaly detection — flags disappearing wildlife sounds</li>
+          <li>Temporal pattern analysis for predictive awareness</li>
+        </ul>
+      </div>
+      <div class="tech-image">
+        <img src="/images/90.png" alt="Forest canopy aerial view — acoustic monitoring"/>
+      </div>
+    </div>
+
+    <!-- LoRa -->
+    <div class="tech-grid fade-in">
+      <div class="tech-image">
+        <img src="/images/07.png" alt="Forest monitoring command center"/>
+      </div>
+      <div class="tech-content">
+        <h3>LoRa Mesh Communication</h3>
+        <p>Alerts travel through a self-healing mesh network that operates deep in remote forests without internet or cellular infrastructure. Data hops between nodes until reaching the command station.</p>
+        <ul class="tech-features">
+          <li>10-15 km range per node</li>
+          <li>Self-healing mesh topology</li>
+          <li>~19 nodes cover ~1,800 sq km</li>
+          <li>Automatic rerouting on node failure</li>
+          <li>Ultra-low power consumption</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LIVE ALERT DASHBOARD ===== -->
+<section class="section section-dark" id="dashboard">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Real-Time Interface</span>
+      <h2 class="section-title">Live Alert Dashboard</h2>
+      <p class="section-subtitle">Rangers and forest officers receive classified alerts with images, sound data, and precise node locations.</p>
+    </div>
+    <div class="alert-dashboard fade-in" style="max-width: 700px; margin: 0 auto;">
+      <div class="alert-header">
+        <div class="alert-header-title"><span class="alert-dot"></span> VanRakshak — Live Alerts</div>
+        <span style="font-size:0.8rem; color: var(--text-dim);">Zone: Western Forest Reserve</span>
+      </div>
+      <ul class="alert-list">
+        <li class="alert-item">
+          <div class="alert-icon danger"><i class="fas fa-crosshairs"></i></div>
+          <div class="alert-content">
+            <div class="alert-title">POACHER ALERT — Node 3</div>
+            <div class="alert-meta">Human intrusion detected · Armed individual · Image captured</div>
+          </div>
+          <div class="alert-time">12s ago</div>
+        </li>
+        <li class="alert-item">
+          <div class="alert-icon warning"><i class="fas fa-tree"></i></div>
+          <div class="alert-content">
+            <div class="alert-title">CHAINSAW DETECTED — Node 5</div>
+            <div class="alert-meta">Bioacoustic alert · Illegal logging suspected · Audio recorded</div>
+          </div>
+          <div class="alert-time">2m ago</div>
+        </li>
+        <li class="alert-item">
+          <div class="alert-icon danger"><i class="fas fa-fire-alt"></i></div>
+          <div class="alert-content">
+            <div class="alert-title">FIRE DETECTED — Node 7</div>
+            <div class="alert-meta">Temperature spike + smoke sensor triggered · Coordinates sent</div>
+          </div>
+          <div class="alert-time">5m ago</div>
+        </li>
+        <li class="alert-item">
+          <div class="alert-icon info"><i class="fas fa-volume-mute"></i></div>
+          <div class="alert-content">
+            <div class="alert-title">ACOUSTIC ANOMALY — SILENCE DETECTED</div>
+            <div class="alert-meta">Bird/animal sounds absent for 48hrs in Sector 12 · Investigate</div>
+          </div>
+          <div class="alert-time">18m ago</div>
+        </li>
+        <li class="alert-item">
+          <div class="alert-icon success"><i class="fas fa-paw"></i></div>
+          <div class="alert-content">
+            <div class="alert-title">WILDLIFE SPOTTED — Node 9</div>
+            <div class="alert-meta">Elephant herd (4 individuals) crossing · Image logged</div>
+          </div>
+          <div class="alert-time">32m ago</div>
+        </li>
+        <li class="alert-item">
+          <div class="alert-icon danger"><i class="fas fa-user-secret"></i></div>
+          <div class="alert-content">
+            <div class="alert-title">HUMAN INTRUSION — Node 14</div>
+            <div class="alert-meta">3 persons detected · Night vision · Weapons visible</div>
+          </div>
+          <div class="alert-time">1h ago</div>
+        </li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ===== STATS ===== -->
+<section class="section">
+  <div class="container">
+    <div class="stats-row fade-in">
+      <div class="stat-item">
+        <div class="stat-value">~19</div>
+        <div class="stat-label">Intelligent Nodes</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">1,800+</div>
+        <div class="stat-label">Sq Km Coverage</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">15km</div>
+        <div class="stat-label">LoRa Range per Node</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">98.5%</div>
+        <div class="stat-label">AI Accuracy</div>
+      </div>
+      <div class="stat-item">
+        <div class="stat-value">&lt;15s</div>
+        <div class="stat-label">Alert Delivery</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== USE CASES ===== -->
+<section class="section section-dark" id="use-cases">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Applications</span>
+      <h2 class="section-title">Beyond Forest Protection</h2>
+      <p class="section-subtitle">VanRakshak's modular design extends to agriculture, high-value plantations, and disaster management.</p>
+    </div>
+    <div class="use-cases-grid">
+      <div class="use-case-card fade-in">
+        <img src="/images/08.png" alt="Anti-poaching surveillance"/>
+        <div class="use-case-content">
+          <span class="use-case-tag">Anti-Poaching</span>
+          <h3>Wildlife Crime Prevention</h3>
+          <p>Real-time poacher detection with night vision and instant alerts</p>
+        </div>
+      </div>
+      <div class="use-case-card fade-in">
+        <img src="/images/85.png" alt="Illegal logging detection"/>
+        <div class="use-case-content">
+          <span class="use-case-tag">Illegal Logging</span>
+          <h3>Timber Theft Detection</h3>
+          <p>Chainsaw sound + vehicle detection stops logging before it escalates</p>
+        </div>
+      </div>
+      <div class="use-case-card fade-in">
+        <img src="/images/10.png" alt="Wildlife monitoring elephants"/>
+        <div class="use-case-content">
+          <span class="use-case-tag">Wildlife Monitoring</span>
+          <h3>Species Tracking &amp; Census</h3>
+          <p>Automated wildlife identification for ecological research</p>
+        </div>
+      </div>
+      <div class="use-case-card fade-in">
+        <img src="/images/90.png" alt="Forest fire prevention"/>
+        <div class="use-case-content">
+          <span class="use-case-tag">Disaster Prevention</span>
+          <h3>Early Wildfire Warning</h3>
+          <p>Temperature + smoke sensors detect fires before they spread</p>
+        </div>
+      </div>
+      <div class="use-case-card fade-in">
+        <img src="/images/19.png" alt="Ecological monitoring owl"/>
+        <div class="use-case-content">
+          <span class="use-case-tag">Bioacoustic</span>
+          <h3>Ecological Health Monitoring</h3>
+          <p>Sound pattern analysis reveals ecosystem disruptions early</p>
+        </div>
+      </div>
+      <div class="use-case-card fade-in">
+        <img src="/images/35.png" alt="Agricultural protection"/>
+        <div class="use-case-content">
+          <span class="use-case-tag">Agriculture</span>
+          <h3>Crop &amp; Farm Protection</h3>
+          <p>Protect high-value crops like sandalwood from theft and wildlife damage</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NODE COMPONENTS ===== -->
+<section class="section" id="node">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">System Architecture</span>
+      <h2 class="section-title">Each VanRakshak Node</h2>
+      <p class="section-subtitle">A self-contained, solar-powered IoT unit deployed across forest regions.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-eye"></i></div>
+        <h3>PIR Motion Sensor</h3>
+        <p>Passive infrared detection triggers the system only when movement occurs, conserving power and eliminating false data.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-camera"></i></div>
+        <h3>Camera Module</h3>
+        <p>High-resolution camera with IR night vision capability captures clear images in all lighting conditions.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-microchip"></i></div>
+        <h3>Raspberry Pi Edge Unit</h3>
+        <p>Onboard computing runs AI inference models locally — no cloud needed. Classifies threats in under 2 seconds.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-satellite-dish"></i></div>
+        <h3>LoRa Transceiver</h3>
+        <p>Long-range radio module enables data transmission up to 15 km per hop through the mesh network.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-thermometer-half"></i></div>
+        <h3>Environmental Sensors</h3>
+        <p>Temperature and smoke detection modules provide early warning for forest fire threats.</p>
+      </div>
+      <div class="feature-card fade-in">
+        <div class="feature-icon"><i class="fas fa-headphones"></i></div>
+        <h3>Bioacoustic Microphone Array</h3>
+        <p>Multi-directional microphones capture and classify forest sounds — gunshots, chainsaws, and wildlife calls.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== GALLERY SECTION ===== -->
+<section class="section section-dark">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">In The Field</span>
+      <h2 class="section-title">VanRakshak Vision</h2>
+      <p class="section-subtitle">Real captures from our AI-powered monitoring system across diverse environments.</p>
+    </div>
+  </div>
+  <div class="image-mosaic">
+    <div class="mosaic-item">
+      <img src="/images/20.png" alt="Rhino detection"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Ceratotherium Simum — 93.7%</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/80.png" alt="Night poacher detection"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Person Detection — Night</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/50.png" alt="Bear in winter"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Bear — Snow Environment</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/75.png" alt="Elephant herd"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Elephant Herd — 4 Individuals</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/70.png" alt="Night vision fence"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Perimeter Detection — Night</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/81.png" alt="Forest monitoring evidence"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Forest Evidence Capture</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/60.png" alt="Tiger tracking"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Tiger — Trail Camera</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/04.png" alt="Panther eyes"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Panther — IR Detection</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/14.png" alt="Elephants in jungle"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Elephant Pair — Dense Canopy</span></div>
+    </div>
+    <div class="mosaic-item">
+      <img src="/images/82.png" alt="Night forest watch"/>
+      <div class="mosaic-item-overlay"><span class="mosaic-item-label">Night Forest Watch — AI Tagged</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== LATEST NEWS ===== -->
+<section class="section" id="news">
+  <div class="container">
+    <div class="section-header fade-in">
+      <span class="section-label">Latest Updates</span>
+      <h2 class="section-title">News &amp; Insights</h2>
+    </div>
+    <div class="blog-grid">
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-card-image">
+          <img src="/images/25.png" alt="VanRakshak launch"/>
+        </div>
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Product Launch</span>
+          <h3>Introducing VanRakshak — The Forest Is Now Watching</h3>
+          <p>How WildSenseAI built the world's first AI + Bioacoustic forest monitoring system that transforms passive observation into active protection.</p>
+        </div>
+        <div class="blog-card-footer">
+          <span>April 2026</span>
+          <span>8 min read</span>
+        </div>
+      </a>
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-card-image">
+          <img src="/images/19.png" alt="Bioacoustic monitoring"/>
+        </div>
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Technology</span>
+          <h3>Bioacoustic Fusion: When Forests Learn to Speak</h3>
+          <p>The science behind listening to forests — how sound pattern analysis reveals ecological health and predicts threats before they become visible.</p>
+        </div>
+        <div class="blog-card-footer">
+          <span>March 2026</span>
+          <span>6 min read</span>
+        </div>
+      </a>
+      <a href="#" class="blog-card fade-in">
+        <div class="blog-card-image">
+          <img src="/images/90.png" alt="Forest canopy"/>
+        </div>
+        <div class="blog-card-body">
+          <span class="blog-card-tag">Infrastructure</span>
+          <h3>LoRa Mesh Networking: Connectivity Where None Exists</h3>
+          <p>How self-healing mesh networks deliver real-time alerts across 1,800 sq km of dense forest without internet or cellular coverage.</p>
+        </div>
+        <div class="blog-card-footer">
+          <span>February 2026</span>
+          <span>5 min read</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section section-dark" id="contact">
+  <div class="container">
+    <div class="cta-content fade-in">
+      <span class="section-label">Join The Mission</span>
+      <h2>Protect Forests Before<br/>It's Too Late</h2>
+      <p>Partner with WildSenseAI to deploy VanRakshak in your forest reserves, national parks, or agricultural lands.</p>
+      <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+        <a href="mailto:contact@wildsenseai.com" class="btn btn-primary btn-large">Contact Us</a>
+        <a href="#about" class="btn btn-outline btn-large">Learn About Us</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer">
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand">
+          <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" width="28" height="28">
+            <circle cx="18" cy="18" r="16" stroke="#e8612d" stroke-width="2" fill="none"/>
+            <path d="M10 22 C10 14, 18 8, 18 8 C18 8, 26 14, 26 22" stroke="#e8612d" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="18" cy="17" r="3" fill="#e8612d"/>
+            <path d="M18 20 L18 26" stroke="#e8612d" stroke-width="2" stroke-linecap="round"/>
+            <path d="M15 24 L21 24" stroke="#e8612d" stroke-width="1.5" stroke-linecap="round"/>
+          </svg>
+          Wild<span>Sense</span>AI
+        </div>
+        <p class="footer-desc">AI-enabled smart forest monitoring. VanRakshak transforms passive observation into active, real-time protection for forests, wildlife, and ecosystems worldwide.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Product</h4>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#technology">Technology</a></li>
+          <li><a href="#use-cases">Use Cases</a></li>
+          <li><a href="#node">System Architecture</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Company</h4>
+        <ul>
+          <li><a href="#about">About Us</a></li>
+          <li><a href="#news">News</a></li>
+          <li><a href="#news">Blog</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <ul>
+          <li><a href="#">Twitter / X</a></li>
+          <li><a href="#">LinkedIn</a></li>
+          <li><a href="#">GitHub</a></li>
+          <li><a href="mailto:contact@wildsenseai.com">Email</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>&copy; 2026 WildSenseAI. All rights reserved.</span>
+      <span>VanRakshak — Forests that See, Hear &amp; Protect</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll effect
+const navbar = document.getElementById('navbar');
+window.addEventListener('scroll', () => {
+  navbar.classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// Mobile nav toggle
+const navToggle = document.getElementById('navToggle');
+const navLinks = document.getElementById('navLinks');
+navToggle.addEventListener('click', () => {
+  navLinks.classList.toggle('active');
+});
+
+// Scroll reveal
+const faders = document.querySelectorAll('.fade-in');
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+faders.forEach(el => observer.observe(el));
+
+// Smooth scroll for anchor links
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function (e) {
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      e.preventDefault();
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      navLinks.classList.remove('active');
+    }
+  });
+});
+</script>
+
+</body>
+</html>

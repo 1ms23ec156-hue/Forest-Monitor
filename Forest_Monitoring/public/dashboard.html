@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <title>VanRakshak — Live Monitoring Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <link rel="stylesheet" href="dashboard.css"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"/>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+</head>
+<body>
+
+<!-- ── SIDEBAR ── -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-brand">
+    <svg viewBox="0 0 36 36" fill="none" width="30" height="30">
+      <circle cx="18" cy="18" r="16" stroke="#e8612d" stroke-width="2" fill="none"/>
+      <path d="M10 22 C10 14, 18 8, 18 8 C18 8, 26 14, 26 22" stroke="#e8612d" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <circle cx="18" cy="17" r="3" fill="#e8612d"/>
+    </svg>
+    <div>
+      <span class="brand-name">VanRakshak</span>
+      <span class="brand-sub">Live Dashboard</span>
+    </div>
+  </div>
+
+  <nav class="sidebar-nav">
+    <a href="#" class="nav-item active" data-panel="overview"><i class="fas fa-th-large"></i> Overview</a>
+    <a href="#" class="nav-item" data-panel="map"><i class="fas fa-map-marked-alt"></i> Node Map</a>
+    <a href="#" class="nav-item" data-panel="alerts"><i class="fas fa-bell"></i> Live Alerts <span class="badge" id="alertBadge">0</span></a>
+    <a href="#" class="nav-item" data-panel="insights"><i class="fas fa-chart-bar"></i> Insights</a>
+    <a href="#" class="nav-item" data-panel="prediction"><i class="fas fa-draw-polygon"></i> Prediction Zones</a>
+    <a href="#" class="nav-item" data-panel="nodes"><i class="fas fa-microchip"></i> Nodes</a>
+  </nav>
+
+  <div class="sidebar-footer">
+    <div class="serial-status" id="serialStatus">
+      <span class="status-dot offline"></span>
+      <span>Serial: Connecting...</span>
+    </div>
+    <a href="/" class="nav-item"><i class="fas fa-globe"></i> Main Website</a>
+  </div>
+</aside>
+
+<!-- ── MAIN CONTENT ── -->
+<main class="main-content">
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+    <h1 class="topbar-title" id="panelTitle">Overview</h1>
+    <div class="topbar-right">
+      <div class="live-indicator">
+        <span class="pulse-dot"></span> LIVE
+      </div>
+      <span class="topbar-time" id="currentTime"></span>
+    </div>
+  </header>
+
+  <!-- ══════════ OVERVIEW PANEL ══════════ -->
+  <div class="panel active" id="panel-overview">
+
+    <!-- KPI Cards -->
+    <div class="kpi-row">
+      <div class="kpi-card">
+        <div class="kpi-icon critical"><i class="fas fa-exclamation-triangle"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-value" id="kpiCritical">0</span>
+          <span class="kpi-label">Critical Alerts</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon warning"><i class="fas fa-shield-alt"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-value" id="kpiWarning">0</span>
+          <span class="kpi-label">Warnings</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon info"><i class="fas fa-paw"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-value" id="kpiWildlife">0</span>
+          <span class="kpi-label">Wildlife Sighted</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon success"><i class="fas fa-satellite-dish"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-value" id="kpiNodes">0/2</span>
+          <span class="kpi-label">Active Nodes</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon cam"><i class="fas fa-camera"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-value" id="kpiCam">0</span>
+          <span class="kpi-label">Camera Events</span>
+        </div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-icon aud"><i class="fas fa-microphone"></i></div>
+        <div class="kpi-data">
+          <span class="kpi-value" id="kpiAud">0</span>
+          <span class="kpi-label">Audio Events</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Overview Grid -->
+    <div class="overview-grid">
+
+      <!-- Mini Map -->
+      <div class="card map-card">
+        <div class="card-header">
+          <h3><i class="fas fa-map"></i> Forest Node Map</h3>
+          <button class="btn-small" onclick="switchPanel('map')">Expand</button>
+        </div>
+        <div id="miniMap" class="mini-map"></div>
+      </div>
+
+      <!-- Recent Alerts -->
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-bell"></i> Recent Alerts</h3>
+          <button class="btn-small" onclick="switchPanel('alerts')">View All</button>
+        </div>
+        <div class="alert-feed" id="overviewAlerts"></div>
+      </div>
+
+      <!-- Detection Chart -->
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-chart-pie"></i> Detection Categories</h3>
+        </div>
+        <div class="chart-container">
+          <canvas id="categoryChart"></canvas>
+        </div>
+      </div>
+
+      <!-- Hourly Activity -->
+      <div class="card">
+        <div class="card-header">
+          <h3><i class="fas fa-clock"></i> 24h Activity</h3>
+        </div>
+        <div class="chart-container">
+          <canvas id="hourlyChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════ MAP PANEL ══════════ -->
+  <div class="panel" id="panel-map">
+    <div class="full-map-container">
+      <div id="fullMap" class="full-map"></div>
+      <div class="map-legend">
+        <h4>Legend</h4>
+        <div class="legend-item"><span class="legend-dot critical"></span> Critical Threat</div>
+        <div class="legend-item"><span class="legend-dot warning"></span> Warning</div>
+        <div class="legend-item"><span class="legend-dot info"></span> Wildlife / Info</div>
+        <div class="legend-item"><span class="legend-dot idle"></span> Idle Node</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ ALERTS PANEL ══════════ -->
+  <div class="panel" id="panel-alerts">
+    <div class="alerts-toolbar">
+      <div class="filter-group">
+        <button class="filter-btn active" data-filter="all">All</button>
+        <button class="filter-btn" data-filter="critical">Critical</button>
+        <button class="filter-btn" data-filter="warning">Warning</button>
+        <button class="filter-btn" data-filter="info">Info</button>
+        <button class="filter-btn" data-filter="CAM">Camera</button>
+        <button class="filter-btn" data-filter="AUD">Audio</button>
+      </div>
+      <span class="alert-count" id="filteredCount">0 alerts</span>
+    </div>
+    <div class="alerts-list" id="alertsList"></div>
+  </div>
+
+  <!-- ══════════ INSIGHTS PANEL ══════════ -->
+  <div class="panel" id="panel-insights">
+    <div class="insights-grid">
+
+      <div class="card insight-full">
+        <div class="card-header"><h3><i class="fas fa-chart-line"></i> Source Distribution (Camera vs Audio)</h3></div>
+        <div class="chart-container wide">
+          <canvas id="sourceChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3><i class="fas fa-fire"></i> Threat Level Breakdown</h3></div>
+        <div class="chart-container">
+          <canvas id="threatChart"></canvas>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header"><h3><i class="fas fa-map-pin"></i> Hotspot Zones</h3></div>
+        <div class="hotspot-list" id="hotspotList"></div>
+      </div>
+
+      <div class="card insight-full">
+        <div class="card-header"><h3><i class="fas fa-lightbulb"></i> AI Insights</h3></div>
+        <div class="insights-text" id="aiInsights">
+          <p>Waiting for data to generate insights...</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ══════════ PREDICTION PANEL ══════════ -->
+  <div class="panel" id="panel-prediction">
+    <div class="prediction-layout">
+      <div class="card prediction-map-card">
+        <div class="card-header">
+          <h3><i class="fas fa-draw-polygon"></i> Predicted Wildlife Boundary (Hex Grid)</h3>
+        </div>
+        <div class="prediction-map-wrap">
+          <div class="prediction-map-toolbar">
+            <span class="pred-chip high"><i class="fas fa-stop"></i> High Presence</span>
+            <span class="pred-chip medium"><i class="fas fa-stop"></i> Medium Presence</span>
+            <span class="pred-chip low"><i class="fas fa-stop"></i> Low Presence</span>
+          </div>
+          <div id="predictionMap" class="prediction-map-canvas"></div>
+        </div>
+      </div>
+
+      <div class="card prediction-side-card">
+        <div class="card-header">
+          <h3><i class="fas fa-bullhorn"></i> Sound Guidance Recommendations</h3>
+        </div>
+        <div class="prediction-list" id="predictionRecommendations"></div>
+      </div>
+
+      <div class="card prediction-full-card">
+        <div class="card-header">
+          <h3><i class="fas fa-info-circle"></i> How To Use This Panel</h3>
+        </div>
+        <div class="insights-text">
+          <div class="insight-item">
+            <i class="fas fa-location-dot"></i>
+            <p>Each hex cell shows estimated animal presence probability near your current node network.</p>
+          </div>
+          <div class="insight-item">
+            <i class="fas fa-wave-square"></i>
+            <p>Use the recommended sound profile to gently redirect animals away from sensitive or risky boundaries.</p>
+          </div>
+          <div class="insight-item">
+            <i class="fas fa-arrows-rotate"></i>
+            <p>Predictions auto-refresh as new camera/audio detections arrive through Socket.IO.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════ NODES PANEL ══════════ -->
+  <div class="panel" id="panel-nodes">
+    <div class="nodes-grid" id="nodesGrid"></div>
+  </div>
+
+</main>
+
+<script src="dashboard.js"></script>
+</body>
+</html>
